@@ -1,14 +1,14 @@
 import javax.swing.DefaultListModel;
 
-public class League<Person> {
-	DefaultListModel<Person> league = new DefaultListModel<Person>(); 
+public class League<E> {
+	DefaultListModel<E> league = new DefaultListModel<E>(); 
 	private int number;
 	
 	public League(int n) {
 		number = n;
 	}
 	
-	public void addPlayer(Person p) {
+	public void addPlayer(E p) {
 		league.addElement(p);
 	}
 	
@@ -16,7 +16,7 @@ public class League<Person> {
 		league.removeAllElements();
 	}
 	
-	public DefaultListModel<Person> getPlayers() {
+	public DefaultListModel<E> getPlayers() {
 		return league;
 	}
 	
