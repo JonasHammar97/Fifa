@@ -159,13 +159,66 @@ public class ControlBoard implements ActionListener {
 				winAway.addActionListener(this);
 		
 		// Bracket panel
-		bracket.setPreferredSize(new Dimension(600, 500));
-		bracket.setBackground(Color.GREEN);
+			bracket.setPreferredSize(new Dimension(600, 500));
+			JPanel left = new JPanel();
+			JPanel middle = new JPanel();
+			JPanel right = new JPanel();
+			left.setPreferredSize(new Dimension(180, 500));
+			left.setLayout(new GridLayout(2,1));
+			middle.setPreferredSize(new Dimension(180, 500));
+			middle.setLayout(new GridBagLayout());
+			right.setPreferredSize(new Dimension(180, 500));
+			right.setLayout(new GridBagLayout());
+			
+			// Left
+			JLabel semiOneHome = new JLabel("test home");
+			JLabel semiOneAway = new JLabel("test away");
+			JLabel semiTwoHome = new JLabel("test home");
+			JLabel semiTwoAway = new JLabel("test away");
+			JPanel semiOnePanel = new JPanel();
+			JPanel semiTwoPanel = new JPanel();
+			semiOnePanel.setLayout(new GridBagLayout());
+			semiOnePanel.add(semiOneHome);
+			semiOnePanel.add(semiOneAway);
+			
+			left.add(semiOnePanel);
+			
+			semiTwoPanel.setLayout(new GridBagLayout());
+			semiTwoPanel.add(semiTwoHome);
+			semiTwoPanel.add(semiTwoAway);
+			
+			left.add(semiTwoPanel);
+			//
+			
+			// middle
+			JLabel finalHome = new JLabel("test home");
+			JLabel finalAway = new JLabel("test away");
+			JPanel finalPanel = new JPanel();
+			finalPanel.setLayout(new GridBagLayout());
+			finalPanel.add(finalHome);
+			finalPanel.add(finalAway);
+			
+			middle.add(finalPanel);
+			//
+		
+			// right
+			JLabel winnerBracket = new JLabel("winner");
+			JPanel winnerPanel = new JPanel();
+			winnerPanel.setLayout(new GridBagLayout());
+			winnerPanel.add(winnerBracket);
+			
+			right.add(winnerPanel);
+			//
+			
+			bracket.add(left);
+			bracket.add(middle);
+			bracket.add(right);
+		// 
 		
 		// JFrame settings
 		frame.add(settings);
 		frame.setSize(500, 500);
-		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
 	
