@@ -49,7 +49,7 @@ public class Match {
 		
 		DefaultListModel<Player> l_players = l.getPlayers();
 
-		int  h_number = rand.nextInt(l_players.size()) + 0;
+		int h_number = rand.nextInt(l_players.size()) + 0;
 		int a_number;
 		do {
 			a_number = rand.nextInt(l_players.size()) + 0;
@@ -65,6 +65,14 @@ public class Match {
 	
 	public Player getHomePlayer() {
 		return home;
+	}
+	
+	public void setAwayPlayer(Player p) {
+		away = p;
+	}
+	
+	public void setHomePlayer(Player p) {
+		home = p;
 	}
 	
 	public void setWinner(Player p) {

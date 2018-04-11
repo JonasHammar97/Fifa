@@ -1,6 +1,6 @@
 public class Player {
 	private League<?> league;
-	private int wins = 0, draws = 0, losses = 0, score;
+	private int wins = 0, draws = 0, losses = 0, score = 0;
 	private String printedText, name;
 	
 	public Player(String n) {
@@ -16,8 +16,8 @@ public class Player {
 		return name;
 	}
 	
-	public void setScore(int s) {
-		score = s;
+	private void addScore(int s) {
+		score += s;
 	}
 	
 	public int getScore() {
@@ -34,10 +34,18 @@ public class Player {
 	
 	public void addWin() {
 		wins += 1;
+		
+		addScore(3);
+	}
+	
+	public int getWins() {
+		return wins;
 	}
 	
 	public void addDraw() {
 		draws += 1;
+		
+		addScore(1);
 	}
 	
 	public int getDraws() {
@@ -57,7 +65,7 @@ public class Player {
 	}
 	
 	public void setSerieString() {
-		setToString(name + " W:" + wins + " D:" + draws + " L:" + losses);
+		setToString(name + " W:" + wins + " D:" + draws + " L:" + losses + " P:" + score);
 	}
 	
 	@Override
