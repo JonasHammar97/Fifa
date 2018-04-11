@@ -197,6 +197,8 @@ public class ControlBoard implements ActionListener {
 
 			currentGame.setWinner(winner);
 			currentGame.setLoser(loser);
+			winner.setSerieString();
+			loser.setSerieString();
 
 			
 			if(currentGame.getLeague() == 1) {
@@ -226,6 +228,33 @@ public class ControlBoard implements ActionListener {
 			
 			winner.setSerieString();
 			loser.setSerieString();
+			
+			if(currentGame.getLeague() == 1) {
+				updateTable(league_1);
+			}else {
+				updateTable(league_2);
+			}
+			
+			startNewMatch(currentGame);
+		}
+		
+		if(e.getSource().equals(draw)) {
+			Player one = null, two = null;
+			
+			for(int i = 0; i < allPlayers.size(); i++) {
+				if(allPlayers.getElementAt(i).getName().equals(homePlayer.getText())) {
+					one = allPlayers.getElementAt(i);
+				}
+
+				if(allPlayers.getElementAt(i).getName().equals(awayPlayer.getText())) {
+					two = allPlayers.getElementAt(i);
+
+				}
+			}
+			currentGame.setDraw(one, two);
+			
+			one.setSerieString();
+			two.setSerieString();
 			
 			if(currentGame.getLeague() == 1) {
 				updateTable(league_1);

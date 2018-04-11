@@ -80,6 +80,8 @@ public class Match {
 	}
 	
 	public void setDraw(Player p1, Player p2) {
+		p1.addDraw();
+		p2.addDraw();
 		draw = true;
 	}
 	
