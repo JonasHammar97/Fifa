@@ -56,6 +56,7 @@ public class League<E> {
 		return topTwo;
 	}
 	
+	// Rename to getMatchesPlayed
 	public int matchesPlayed() {
 		return matchesPlayed;
 	}

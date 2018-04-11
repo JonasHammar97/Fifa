@@ -4,8 +4,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.DefaultListModel;
 
 public class Match {
-	private Player home;
-	private Player away;
+	private Player homePlayer;
+	private Player awayPlayer;
 	private Player winner, loser;
 	private boolean draw = true;
 	private int league;
@@ -15,64 +15,72 @@ public class Match {
 	public void start(League<Player> l1, League<Player> l2) {
 		league = ThreadLocalRandom.current().nextInt(1, 3);
 		
-		Random rand = new Random();
-		
 		if(league == 1) {
-			DefaultListModel<Player> l1_players = l1.getPlayers();
-
-			int  h_number = rand.nextInt(l1_players.size()) + 0;
-			int a_number;
-			do {
-				a_number = rand.nextInt(l1_players.size()) + 0;
-			} while(h_number == a_number);
-			
-			home = l1_players.getElementAt(h_number);
-			away = l1_players.getElementAt(a_number);
+			newMatch(l1);
 		} else {
-			DefaultListModel<Player> l2_players = l2.getPlayers();
-			
-			int  h_number = rand.nextInt(l2_players.size()) + 0;
-			int a_number;
-			do {
-				a_number = rand.nextInt(l2_players.size()) + 0;
-			} while(h_number == a_number);
-			
-			home = l2_players.getElementAt(h_number);
-			away = l2_players.getElementAt(a_number);
+			newMatch(l2);
 		}
 	}
 	
-	public void newMatch(League<Player> l) {
+	private void randomizeVersus(DefaultListModel<Player> players) {
 		Random rand = new Random();
 		
-		league = l.getNumber();
+		int h = rand.nextInt(players.size()) + 0;
+		int a;
+		do {
+			a = rand.nextInt(players.size()) + 0;
+		} while(h == a);
+		
+		setHomePlayer(players.getElementAt(h));
+		setAwayPlayer(players.getElementAt(a));
+	}
+	
+	// Borde vara konstruktor
+	public void newMatch(League<Player> l) {
+		// Set league
+		setLeague(l.getNumber());
 		
 		DefaultListModel<Player> l_players = l.getPlayers();
 
-		int h_number = rand.nextInt(l_players.size()) + 0;
-		int a_number;
-		do {
-			a_number = rand.nextInt(l_players.size()) + 0;
-		} while(h_number == a_number);
+		// Check if they've met before
+		boolean metBefore = false;
 		
-		home = l_players.getElementAt(h_number);
-		away = l_players.getElementAt(a_number);
+		// get versus
+		randomizeVersus(l_players);
+		
+		// Check in one players list if the other player is in it
+		DefaultListModel<Player> homeVersuses = homePlayer.getVersus();
+		for(int i = 0; i < homeVersuses.size(); i++) {
+			if(homeVersuses.getElementAt(i).getName() == awayPlayer.getName()) {
+				metBefore = true;
+			}
+		}
+		
+		if(!metBefore) {
+			// Add versus in each list
+			homePlayer.addVersus(awayPlayer);
+			awayPlayer.addVersus(homePlayer);
+			
+			l.matchPlayed();
+		} else {
+			newMatch(l);
+		}
 	}
 	
 	public Player getAwayPlayer() {
-		return away;
+		return awayPlayer;
 	}
 	
 	public Player getHomePlayer() {
-		return home;
+		return homePlayer;
 	}
 	
 	public void setAwayPlayer(Player p) {
-		away = p;
+		awayPlayer = p;
 	}
 	
 	public void setHomePlayer(Player p) {
-		home = p;
+		homePlayer = p;
 	}
 	
 	public void setWinner(Player p) {
@@ -85,6 +93,10 @@ public class Match {
 		p.addLoss();
 		
 		loser = p;
+	}
+	
+	public Player getWinner() {
+		return winner;
 	}
 	
 	public void setDraw(Player p1, Player p2) {

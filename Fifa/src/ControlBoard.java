@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -14,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -34,7 +34,6 @@ public class ControlBoard implements ActionListener {
 	private JList<Player> leageuTwoJList = new JList<Player>(league_2.league);
 	private JList<Player> serieOneJList = new JList<Player>(league_1.league);
 	private JList<Player> serieTwoJList = new JList<Player>(league_2.league);
-
 
 	private JLabel leageuOneLabel = new JLabel("League one");
 	private JLabel leageuTwoLabel = new JLabel("League two");
@@ -75,21 +74,29 @@ public class ControlBoard implements ActionListener {
 
 	private DefaultListModel<Match> allMatches = new DefaultListModel<Match>();
 	
-	// Bracket label
-	JLabel semiOneHome = new JLabel("test home");
-	JLabel semiOneAway = new JLabel("test away");
-	JLabel semiTwoHome = new JLabel("test home");
-	JLabel semiTwoAway = new JLabel("test away");
+	// Bracket labels
+	
+	// Semi-final
+	JLabel semiOneHome = new JLabel("Home");
+	JLabel semiOneAway = new JLabel("Away");
+	JLabel semiTwoHome = new JLabel("Home");
+	JLabel semiTwoAway = new JLabel("Away");
+	
+	// Final
+	JLabel finalHome = new JLabel("Home");
+	JLabel finalAway = new JLabel("Away");
+	
+	// Winner
+	JLabel winnerLabel = new JLabel("winner");
+	
+	//
 
 	public ControlBoard() {
 
 		// Right panel
-		right.setLayout(new GridLayout(6, 1));
-		right.add(playersLabel);
+		right.setLayout(new GridLayout(3, 1, 0, 20));
 		right.add(playerList);
-		right.add(leageuOneLabel);
 		right.add(leageuOneJList);
-		right.add(leageuTwoLabel);
 		right.add(leageuTwoJList);
 
 		// Left panel
@@ -104,11 +111,11 @@ public class ControlBoard implements ActionListener {
 		settings.add(left, BorderLayout.WEST);
 
 		// JPanel customization
-		playerList.setPreferredSize(new Dimension(250, 100));
+		playerList.setPreferredSize(new Dimension(300, 100));
 		playerList.setBorder(new EmptyBorder(10,10, 10, 10));
-		leageuOneJList.setPreferredSize(new Dimension(250, 100));
+		leageuOneJList.setPreferredSize(new Dimension(300, 100));
 		leageuOneJList.setBorder(new EmptyBorder(10,10, 10, 10));
-		leageuTwoJList.setPreferredSize(new Dimension(250, 100));
+		leageuTwoJList.setPreferredSize(new Dimension(300, 100));
 		leageuTwoJList.setBorder(new EmptyBorder(10,10, 10, 10));
 
 		// Buttons actionListeners
@@ -150,9 +157,8 @@ public class ControlBoard implements ActionListener {
 		// Versus fields components
 		homePlayer.setEditable(false);
 		awayPlayer.setEditable(false);
-		JLabel versusLabel = new JLabel("vs");
 		versusFields.add(homePlayer);
-		versusFields.add(versusLabel);
+		versusFields.add(new JLabel(" vs "));
 		versusFields.add(awayPlayer);
 
 		// Versus fields controlBoard
@@ -185,33 +191,33 @@ public class ControlBoard implements ActionListener {
 			JPanel semiTwoPanel = new JPanel();
 			semiOnePanel.setLayout(new GridBagLayout());
 			semiOnePanel.add(semiOneHome);
+			semiOnePanel.add(new JLabel(" vs "));
 			semiOnePanel.add(semiOneAway);
 			
 			left.add(semiOnePanel);
 			
 			semiTwoPanel.setLayout(new GridBagLayout());
 			semiTwoPanel.add(semiTwoHome);
+			semiTwoPanel.add(new JLabel(" vs "));
 			semiTwoPanel.add(semiTwoAway);
 			
 			left.add(semiTwoPanel);
 			//
 			
 			// middle
-			JLabel finalHome = new JLabel("test home");
-			JLabel finalAway = new JLabel("test away");
 			JPanel finalPanel = new JPanel();
 			finalPanel.setLayout(new GridBagLayout());
 			finalPanel.add(finalHome);
+			finalPanel.add(new JLabel(" vs "));
 			finalPanel.add(finalAway);
 			
 			middle.add(finalPanel);
 			//
 		
 			// right
-			JLabel winnerBracket = new JLabel("winner");
 			JPanel winnerPanel = new JPanel();
 			winnerPanel.setLayout(new GridBagLayout());
-			winnerPanel.add(winnerBracket);
+			winnerPanel.add(winnerLabel);
 			
 			right.add(winnerPanel);
 			//
@@ -250,19 +256,56 @@ public class ControlBoard implements ActionListener {
 
 				}
 			}
-
-			currentGame.setWinner(winner);
-			currentGame.setLoser(loser);
-			winner.setSerieString();
-			loser.setSerieString();
-
 			
-			if(currentGame.getLeague() == 1) {
-				updateTable(league_1);
-			}else {
-				updateTable(league_2);
+			// If bracket has started
+			if(bracket.checkStart()) {
+				
+				if(bracket.checkSemi()) {
+					bracket.getFinal().setWinner(winner);
+					
+					winnerLabel.setText(winner.getName());
+				} else {
+					if(winner.getName() == bracket.getSemi1().getAwayPlayer().getName() || winner.getName() == bracket.getSemi1().getHomePlayer().getName()) {
+						bracket.getSemi1().setWinner(winner);
+						
+						// Start semi 2
+						homePlayer.setText(bracket.getSemi2().getHomePlayer().getName());
+						awayPlayer.setText(bracket.getSemi2().getAwayPlayer().getName());
+					} else {
+						bracket.getSemi2().setWinner(winner);
+					}
+					
+					// Start final if both semis are played
+					if(bracket.getSemi1().getWinner() != null && bracket.getSemi2().getWinner() != null ) {
+						bracket.setSemiPlayed(true);
+						
+						// Set label texts
+						finalHome.setText(bracket.getSemi1().getWinner().getName());
+						finalAway.setText(bracket.getSemi2().getWinner().getName());
+						
+						// Set game label boxes
+						homePlayer.setText(bracket.getSemi1().getWinner().getName());
+						awayPlayer.setText(bracket.getSemi2().getWinner().getName());
+						
+						// Setup final game
+						bracket.setFinal(bracket.getSemi1().getWinner(), bracket.getSemi2().getWinner());
+					}
+				}
+			} else {
+				currentGame.setWinner(winner);
+				currentGame.setLoser(loser);
+				winner.setSerieString();
+				loser.setSerieString();
+
+				
+				if(currentGame.getLeague() == 1) {
+					updateTable(league_1);
+				}else {
+					updateTable(league_2);
+				}
+				
+				checkGames();
 			}
-			startNewMatch(currentGame);
 		}
 
 		if(e.getSource().equals(winHome)) {
@@ -279,19 +322,57 @@ public class ControlBoard implements ActionListener {
 				}
 			}
 
-			currentGame.setWinner(winner);
-			currentGame.setLoser(loser);
-			
-			winner.setSerieString();
-			loser.setSerieString();
-			
-			if(currentGame.getLeague() == 1) {
-				updateTable(league_1);
-			}else {
-				updateTable(league_2);
+			// If bracket has started
+			if(bracket.checkStart()) {
+				
+				// Disable draw button
+				draw.setEnabled(false);
+				
+				if(bracket.checkSemi()) {
+					bracket.getFinal().setWinner(winner);
+					
+					winnerLabel.setText(winner.getName());
+				} else {
+					if(winner.getName() == bracket.getSemi1().getAwayPlayer().getName() || winner.getName() == bracket.getSemi1().getHomePlayer().getName()) {
+						bracket.getSemi1().setWinner(winner);
+						
+						// Start semi 2
+						homePlayer.setText(bracket.getSemi2().getHomePlayer().getName());
+						awayPlayer.setText(bracket.getSemi2().getAwayPlayer().getName());
+					} else {
+						bracket.getSemi2().setWinner(winner);
+					}
+					
+					// Start final if both semis are played
+					if(bracket.getSemi1().getWinner() != null && bracket.getSemi2().getWinner() != null ) {
+						bracket.setSemiPlayed(true);
+						
+						// Set label texts
+						finalHome.setText(bracket.getSemi1().getWinner().getName());
+						finalAway.setText(bracket.getSemi2().getWinner().getName());
+						
+						// Set game label boxes
+						homePlayer.setText(bracket.getSemi1().getWinner().getName());
+						awayPlayer.setText(bracket.getSemi2().getWinner().getName());
+						
+						// Setup final game
+						bracket.setFinal(bracket.getSemi1().getWinner(), bracket.getSemi2().getWinner());
+					}
+				}
+			} else {
+				currentGame.setWinner(winner);
+				currentGame.setLoser(loser);
+				winner.setSerieString();
+				loser.setSerieString();
+
+				if(currentGame.getLeague() == 1) {
+					updateTable(league_1);
+				}else {
+					updateTable(league_2);
+				}
+				
+				checkGames();
 			}
-			
-			startNewMatch(currentGame);
 		}
 		
 		if(e.getSource().equals(draw)) {
@@ -318,7 +399,7 @@ public class ControlBoard implements ActionListener {
 				updateTable(league_2);
 			}
 			
-			startNewMatch(currentGame);
+			checkGames();
 		}
 
 		if(e.getSource().equals(randLeague)) {
@@ -374,6 +455,37 @@ public class ControlBoard implements ActionListener {
 		}
 	}
 	
+	private void startBracket() {
+		
+		// Get top 2 players in each league
+		Player[] topTwo1 = league_1.getTopTwo();
+		Player[] topTwo2 = league_2.getTopTwo();
+		
+		// Start semi-final
+		bracket.setSemi(topTwo1, topTwo2);
+		bracket.setStart(true);
+		
+		// Disable draw button
+		draw.setEnabled(false);
+		
+		semiOneHome.setText(bracket.getSemi1().getHomePlayer().getName());
+		semiOneAway.setText(bracket.getSemi1().getAwayPlayer().getName());
+		semiTwoHome.setText(bracket.getSemi2().getHomePlayer().getName());
+		semiTwoAway.setText(bracket.getSemi2().getAwayPlayer().getName());
+		
+		homePlayer.setText(bracket.getSemi1().getHomePlayer().getName());
+		awayPlayer.setText(bracket.getSemi1().getAwayPlayer().getName());
+	}
+	
+	private void checkGames() {
+		// Brackets with more than 5 players
+		if(league_1.matchesPlayed() == league_1.getPlayers().size() && league_2.matchesPlayed() == league_2.getPlayers().size()) {
+			startBracket();
+		} else {
+			startNewMatch(currentGame);
+		}
+	}
+	
 	private void updateTable(League <Player> l) {
 		
 		for(int i = 0; i < l.league.size(); i++) {
@@ -405,7 +517,7 @@ public class ControlBoard implements ActionListener {
 				System.out.println("League 1 games:" + league_1.matchesPlayed());
 				
 				// Check games played
-				if(league_1.matchesPlayed() == league_1.getPlayers().size() * (league_1.getPlayers().size() - 1)) {
+				if(league_1.matchesPlayed() == league_1.getPlayers().size()) {
 					// start bracket
 					System.out.println("Start bracket 1");
 				}
@@ -416,17 +528,13 @@ public class ControlBoard implements ActionListener {
 				currentGame.newMatch(league_1);
 				homePlayer.setText(currentGame.getHomePlayer().getName());
 				awayPlayer.setText(currentGame.getAwayPlayer().getName());
-				
-				// Set match as played
-				league_1.matchPlayed();
 			} else if(league_2.getPlayers().size() > 2) {
 				// League 2 got 3 players
 				
-				System.out.println("League 2 games:" + league_2.matchesPlayed());
 				// Check games played
-				if(league_2.matchesPlayed() == league_2.getPlayers().size() * (league_2.getPlayers().size() - 1)) {
+				if(league_2.matchesPlayed() == league_2.getPlayers().size()) {
 					// start bracket
-					System.out.println("Start bracket 2");
+					System.out.println("Start bracket entry 2");
 				}
 				
 				// Create game from league 2
@@ -435,11 +543,8 @@ public class ControlBoard implements ActionListener {
 				currentGame.newMatch(league_2);
 				homePlayer.setText(currentGame.getHomePlayer().getName());
 				awayPlayer.setText(currentGame.getAwayPlayer().getName());
-				
-				// Set match as played
-				league_2.matchPlayed();
 			} else {
-				System.out.println("Start bracket 3");
+				System.out.println("Start bracket entry 3");
 			}
 		} else {
 			// More than or equal to 6 players
@@ -453,8 +558,6 @@ public class ControlBoard implements ActionListener {
 				currentGame.newMatch(league_2);
 				homePlayer.setText(currentGame.getHomePlayer().getName());
 				awayPlayer.setText(currentGame.getAwayPlayer().getName());
-				
-				league_2.matchPlayed();
 			} else {
 				// Create game from league 1
 				
@@ -464,23 +567,6 @@ public class ControlBoard implements ActionListener {
 				currentGame.newMatch(league_1);
 				homePlayer.setText(currentGame.getHomePlayer().getName());
 				awayPlayer.setText(currentGame.getAwayPlayer().getName());
-				
-				league_1.matchPlayed();
-			}
-			
-			// Brackets with more than 5 players
-			if(league_1.matchesPlayed() == league_1.getPlayers().size() * (league_1.getPlayers().size() - 1) 
-					&& league_2.matchesPlayed() == league_2.getPlayers().size() * (league_2.getPlayers().size() - 1)) {
-				System.out.println("Start bracket 4");
-				Player[] topTwo1 = league_1.getTopTwo();
-				Player[] topTwo2 = league_2.getTopTwo();
-				
-				// start bracket
-				bracket.setSemi(topTwo1, topTwo2);
-				semiOneHome.setText(bracket.getSemi1().getHomePlayer().getName());
-				semiOneAway.setText(bracket.getSemi1().getAwayPlayer().getName());
-				semiTwoHome.setText(bracket.getSemi2().getHomePlayer().getName());
-				semiTwoAway.setText(bracket.getSemi2().getAwayPlayer().getName());
 			}
 		}
 	}

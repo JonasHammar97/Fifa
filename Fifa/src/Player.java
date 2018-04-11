@@ -1,7 +1,12 @@
+import java.util.Random;
+
+import javax.swing.DefaultListModel;
+
 public class Player {
 	private League<?> league;
 	private int wins = 0, draws = 0, losses = 0, score = 0;
 	private String printedText, name;
+	private DefaultListModel<Player> playersVersused = new DefaultListModel<Player>();
 	
 	public Player(String n) {
 		setToString(n);
@@ -66,6 +71,14 @@ public class Player {
 	
 	public void setSerieString() {
 		setToString(name + " W:" + wins + " D:" + draws + " L:" + losses + " P:" + score);
+	}
+	
+	public void addVersus(Player p) {
+		playersVersused.addElement(p);
+	}
+	
+	public DefaultListModel<Player> getVersus() {
+		return playersVersused;
 	}
 	
 	@Override
