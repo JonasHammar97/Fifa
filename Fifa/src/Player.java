@@ -72,6 +72,5 @@ public class Player {
 	public String toString() {
 		//String n = name + " W:" + wins + " D:" + draws + " L:" + losses; 
 		return printedText;
-		//printedText;
 	}
 }

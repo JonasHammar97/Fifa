@@ -62,6 +62,7 @@ public class ControlBoard implements ActionListener {
 	private JPanel versusFieldsControlBoard = new JPanel();
 	
 	//JButtons
+	
 	private JButton winHome = new JButton("W");
 	private JButton winAway = new JButton("W");
 	private JButton draw = new JButton("D");
